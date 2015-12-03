@@ -34,5 +34,8 @@
     "tiny-lr": "^0.1.6",
     "vinyl": "^0.5.1",
     "win-spawn": "^2.0.0"
+  },
+  "dependencies": {
+    "imagemin-pngquant": "^4.2.0"
   }
 }
