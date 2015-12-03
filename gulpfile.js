@@ -1,6 +1,6 @@
 /*
 npm install --global gulp
-npm install  gulp gulp-util gulp-sass gulp-uglify gulp-autoprefixer gulp-rename gulp-minify-css gulp-notify imagemin-pngquant gulp-imagemin gulp-concat gulp-plumber browser-sync gulp-rigger --save-dev
+npm install  gulp gulp-util gulp-sass gulp-uglify gulp-autoprefixer gulp-rename gulp-minify-css gulp-notify imagemin-pngquant gulp-imagemin gulp-concat gulp-plumber browser-sync gulp-rigger gulp-cache --save-dev
  */
 
 /* Needed gulp config */
@@ -16,6 +16,7 @@ var imagemin = require('gulp-imagemin');
 var pngquant = require('imagemin-pngquant');
 var rigger = require('gulp-rigger');
 var plumber = require('gulp-plumber');
+var cache = require('gulp-cache');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 
@@ -38,7 +39,9 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest('app/js'))
     .pipe(rename({suffix: '.min'}))
     .pipe(uglify())
-    .pipe(gulp.dest('app/js'));
+    .pipe(gulp.dest('app/js'))
+    .pipe(notify({ message: 'Scripts task complete' }))
+    .pipe(reload({stream:true}));
 });
 
 /* Sass task */
@@ -55,6 +58,7 @@ gulp.task('sass', function () {
     .pipe(rename({suffix: '.min', prefix : '_'}))
     .pipe(minifycss())
     .pipe(gulp.dest('app'))
+    .pipe(notify({ message: 'Styles task complete' }))
     /* Reload the browser CSS after every change */
     .pipe(reload({stream:true}));
 });
@@ -62,14 +66,15 @@ gulp.task('sass', function () {
 /* Image task */
 gulp.task('images', function () {
     return gulp.src('pre-images/*.*')
-        .pipe(imagemin({
+        .pipe(cache(imagemin({
             progressive: true,
-            optimizationLevel: 3,
+            optimizationLevel: 5,
             svgoPlugins: [{removeViewBox: false}],
             use: [pngquant()],
             interlaced: true
-        }))
+        })))
         .pipe(gulp.dest('app/img'))
+        .pipe(notify({ message: 'Images task complete' }))
         .pipe(reload({stream: true}));
 });
 
